@@ -1,5 +1,5 @@
 from Detector import *
 
-detector = Detector()
+detector = Detector(model_type='OD')
 
-detector.onImage("images/1.jpg")
+detector.onImage("data/img/test/0.jpg")

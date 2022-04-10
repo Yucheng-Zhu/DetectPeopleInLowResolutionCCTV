@@ -94,7 +94,7 @@ def save_COCO_file(path_to_save, COCO):
 # -5- Define variables
 train = {
     'folder': 'data/img/train/',
-    'makesenseai_files': ['a.csv', 'b.csv']
+    'makesenseai_files': ['a.csv', 'b.csv', 'c.csv']
 }
 # valid = {
 #     'folder': 'data/img/test/',

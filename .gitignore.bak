@@ -9,7 +9,6 @@ zzTests/**
 balloon/**
 
 output/**
-output(ballon)/**
 
 zzGitPush.bat
 zzGitPush.bat.bak

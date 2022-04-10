@@ -38,17 +38,23 @@ class Detector:
     def _onImage(self, image):
         if self.model_type == 'PS':
             predictions, segmentInfo = self.predictor(image)['panoptic_seg']
-            viz = Visualizer(image[:,:,::-1], MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]))
+            viz = Visualizer(
+                image[:,:,::-1], 
+                MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
+            )
             output = viz.draw_panoptic_set_predictions(predictions.to('cpu'), segmentInfo)
             
         else:
             # image = cv2.imread(imagePath)
             predictions = self.predictor(image)
             
-            viz = Visualizer(image[:,:,::-1], metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]),
-            # instance_mode = ColorMode.IMAGE_BW)
-            # instance_mode = ColorMode.SEGMENTATION)
-            instance_mode = ColorMode.IMAGE)
+            viz = Visualizer(
+                image[:,:,::-1], 
+                metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0]),
+                # instance_mode = ColorMode.IMAGE_BW)
+                # instance_mode = ColorMode.SEGMENTATION)
+                instance_mode=ColorMode.IMAGE
+            )
             
             output = viz.draw_instance_predictions(predictions["instances"].to("cpu"))
             
@@ -76,3 +82,14 @@ class Detector:
             (success, image) = cap.read()
 
 
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            

@@ -35,10 +35,16 @@ def makesenseai_to_COCO(makesenseai_df, folder, start=0):
         makesenseai_df, start=start
     )
     COCO = []
-    for i in images_names_range:
+    i = start-1
+    group = makesenseai_df.groupby('file_name')
+    for current_file_name, current_file_content in group:
+        i += 1
+        print(f'makesenseai_to_COCO: {i = }, {current_file_name = }')
+#     for i in images_names_range:
+#         current_file_name = str(i)+'.png'
         current_image = {}
         current_image['file_name'] = \
-            os.path.join(folder, str(i)+'.png')
+            os.path.join(folder, current_file_name)
         current_image['image_id'] = int(i)
         img = cv2.imread(
             current_image['file_name']
@@ -49,15 +55,15 @@ def makesenseai_to_COCO(makesenseai_df, folder, start=0):
         
         
         current_image_rows = makesenseai_df[
-            makesenseai_df["file_name"] \
-                == str(i)+'.png'
+            makesenseai_df['file_name'] \
+                == current_file_name
         ]
 #         if current_image_rows.shape[0] > 0:
         current_image['annotations'] = []
         
-        for i in range(current_image_rows.shape[0]):
+        for r in range(current_image_rows.shape[0]):
             label = {}
-            row = current_image_rows.iloc[i]
+            row = current_image_rows.iloc[r]
             label['bbox'] = int(row['x']), int(row['y']), \
                             int(row['w']), int(row['h'])
             label['bbox_mode'] = BoxMode.XYWH_ABS

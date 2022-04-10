@@ -6,20 +6,30 @@ import cv2
 # -5- Define functions
 # -- 
 def read_makesense_ai_output(
-    makesenseai_path
+    folder,
+    makesenseai_files
 ):
+    makesenseai_dfs_list = []
 #     folder = 'img/train/'
-    makesenseai_df = pd.read_csv(
-        #folder+'labels.csv',
-        makesenseai_path,
-        header=None,
-        names=[
-            'class', 
-            'x','y','w','h', 
-            'file_name', 
-            'image_width','image_height'
-        ]
-    )
+    for makesenseai_file in makesenseai_files:
+        makesenseai_path = os.path.join(folder, makesenseai_file)
+        makesenseai_df = pd.read_csv(
+            #folder+'labels.csv',
+            makesenseai_path,
+            header=None,
+            names=[
+                'class', 
+                'x','y','w','h', 
+                'file_name', 
+                'image_width','image_height'
+            ]
+        )
+        makesenseai_dfs_list.append(makesenseai_df)
+    makesenseai_df = pd.concat(
+        makesenseai_dfs_list,
+        axis=0,
+        join='outer'
+    ).reset_index()
     return makesenseai_df
 
 # -- 
@@ -39,7 +49,6 @@ def makesenseai_to_COCO(makesenseai_df, folder, start=0):
     group = makesenseai_df.groupby('file_name')
     for current_file_name, current_file_content in group:
         i += 1
-        print(f'makesenseai_to_COCO: {i = }, {current_file_name = }')
 #     for i in images_names_range:
 #         current_file_name = str(i)+'.png'
         current_image = {}
@@ -85,21 +94,22 @@ def save_COCO_file(path_to_save, COCO):
 # -5- Define variables
 train = {
     'folder': 'data/img/train/',
-    'makesenseai_file': 'train.csv'
+    'makesenseai_files': ['a.csv', 'b.csv']
 }
-valid = {
-    'folder': 'data/img/valid/',
-    'makesenseai_file': 'valid.csv'
-}
+# valid = {
+#     'folder': 'data/img/test/',
+#     'makesenseai_files': ['test.csv']
+# }
 start = 0
 # -5- call functions for train, valid, test
-for cv in (train, valid):
+# for cv in (train, valid):
+for cv in (train,):
     
     folder = cv['folder']
-    makesenseai_file = cv['makesenseai_file']
-    makesenseai_path = os.path.join(folder, makesenseai_file)
+    makesenseai_files = cv['makesenseai_files']
+#     makesenseai_path = os.path.join(folder, makesenseai_files)
     
-    makesenseai_df = read_makesense_ai_output(makesenseai_path)
+    makesenseai_df = read_makesense_ai_output(folder, makesenseai_files)
     
     COCO_train = makesenseai_to_COCO(
             makesenseai_df, folder, start=start
@@ -107,7 +117,7 @@ for cv in (train, valid):
     
     save_COCO_file(
         # folder+'train.json', 
-        makesenseai_path.replace('.csv', '.json'), 
+        os.path.join(folder, 'train.json'), 
         COCO_train
     )
     
